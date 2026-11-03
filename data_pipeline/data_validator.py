@@ -3,8 +3,11 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
-def validate_dataframe(df: pd.DataFrame, required_columns: list, numeric_columns: list) -> pd.DataFrame:
-    """Validate the DataFrame and return valid data."""
+def validate_dataframe(df: pd.DataFrame, validation_config: dict) -> pd.DataFrame:
+    """Validate the DataFrame and return valid data using a config dictionary."""
+    required_columns = validation_config.get("required_columns", [])
+    numeric_columns = validation_config.get("numeric_columns", [])
+    
     # Check required columns
     for col in required_columns:
         if col not in df.columns:
@@ -13,7 +16,6 @@ def validate_dataframe(df: pd.DataFrame, required_columns: list, numeric_columns
 
     valid_df = df.copy()
     initial_len = len(valid_df)
-    total_removed = 0
 
     # Validate numeric columns
     for col in numeric_columns:
@@ -32,9 +34,7 @@ def validate_dataframe(df: pd.DataFrame, required_columns: list, numeric_columns
         
         if invalid_indices:
             valid_df = valid_df.drop(index=invalid_indices)
-            count_removed = len(invalid_indices)
-            total_removed += count_removed
-            logger.warning(f"Removed {count_removed} rows with invalid numeric values in {col}")
+            logger.warning(f"Removed {len(invalid_indices)} rows with invalid numeric values in {col}")
 
         valid_df[col] = pd.to_numeric(valid_df[col], errors='coerce')
 
