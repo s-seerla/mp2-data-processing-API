@@ -1,0 +1,13 @@
+# Virtual environment
+venv/
+.venv/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Generated files
+*.log
+.DS_Store
+.env
